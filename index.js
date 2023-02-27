@@ -7,9 +7,8 @@ dotenv.config();
 connectToDB();
 
 const app = express();
-app.use("/wine", wineRouter);
-
 app.use(express.json());
+app.use("/wine", wineRouter);
 
 app.listen(Number(process.env.PORT), () => {
   console.log(`Server up and running at port ${process.env.PORT}`);

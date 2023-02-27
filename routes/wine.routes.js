@@ -3,7 +3,7 @@ import { WineModel } from "../models/wine.model.js";
 
 const wineRouter = express.Router();
 
-//POSTO - CREATE
+//POST - CREATE
 wineRouter.post("/", async (req, res) => {
   try {
     if (!req.headers.authorization) {
@@ -46,11 +46,9 @@ wineRouter.get("/", async (req, res) => {
         error: message,
       });
     }
-
     if (error.code === 11000) {
       return res.status(400).json(error.message);
     }
-
     return res.status(500).json(error.message);
   }
 });
@@ -88,6 +86,7 @@ wineRouter.put("/:wineId", async (req, res) => {
       { ...req.body }, // 2 parametro - o que quero editar
       { new: true, runValidators: true } //3º parâmetro é um objeto de configuração
     );
+    return res.status(200).json(updateWine);
   } catch (error) {
     console.log(error);
     // checking validation
@@ -107,7 +106,7 @@ wineRouter.put("/:wineId", async (req, res) => {
 });
 
 //DELETE
-wineRouter.put("/:wineId", async (req, res) => {
+wineRouter.delete("/:wineId", async (req, res) => {
   try {
     const { wineId } = req.params;
     const deleted = await WineModel.deleteOne({ _id: wineId });
