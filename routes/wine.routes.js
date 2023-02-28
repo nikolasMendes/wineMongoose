@@ -1,16 +1,22 @@
 import express from "express";
 import { WineModel } from "../models/wine.model.js";
+import { BodegaModel } from "./../models/bodega.model.js";
 
 const wineRouter = express.Router();
 
 //POST - CREATE
-wineRouter.post("/", async (req, res) => {
+wineRouter.post("/:bodegaId", async (req, res) => {
   try {
     if (!req.headers.authorization) {
       return res.status(401).json("Não autorizado.");
     }
-
-    const newWine = await WineModel.create({ ...req.body });
+    const { bodegaId } = req.params;
+    const newWine = await WineModel.create({ ...req.body, bodega: bodegaId });
+    await BodegaModel.findOneAndUpdate(
+      { _id: bodegaId },
+      { $push: { wine: newWine._id } },
+      { new: true, runValidators: true }
+    );
 
     return res.status(201).json(newWine);
   } catch (error) {
